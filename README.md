@@ -12,3 +12,9 @@ flask db migrate -m "initial tables"
 flask db upgrade
 
 pip install pandas scikit-learn joblib sqlalchemy
+pip install python-slugify
+pip install pandas
+pip install joblib
+pip install scikit-learn
+
+pip install Flask-Session

@@ -1,0 +1,63 @@
+{# templates/category.html #}
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+{% block content %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Question</h1> 
+</div>
+
+<div class="row"> 
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Daftar Pertanyaan</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="questionTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Pertanyaan</th> 
+                                <th>Kategori</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for q in questions %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ q.question }}</td> 
+                                <td>{{ q.category_name }}</td>
+                                <td>{{ q.created_at.strftime('%Y-%m-%d %H:%M') if q.created_at else '-' }}</td> 
+                                <td>
+                                    <a href="{{ url_for('bp_question.edit', id=q.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+ 
+{% endblock %}
+
+{% block scripts %}  
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#respondentsTable').DataTable();
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Mulai DASS-21</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous">
+    
+    <style>
+        body.bg-white {
+            background: linear-gradient(135deg, #e9f0ff, #ffffff);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: url('{{ url_for("static", filename="img/bg-pattern.svg") }}');
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        .btn-start {
+            background-color: #4d72de;
+            color: white;
+            font-size: 1.1rem;
+            padding: 10px 25px;
+            border-radius: 8px;
+        }
+        .info-box {
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff;
+
+        }
+        .info-box h4 {
+            font-size: 32px;
+            color: #4d72de;
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-5 mb-4 mb-md-0 text-center">
+            <img src="{{ url_for('static', filename='img/start_survey.svg') }}" alt="Survey Image" class="img-fluid" style="max-height: 400px;">
+        </div>
+        <div class="col-md-7">
+            <h3 class="fw-bold">Memahami Keadaan Emosi Anda</h3>
+            <p>Gunakan skala DASS-21 untuk mengevaluasi tingkat Depresi, Kecemasan, dan Stres Anda.</p>
+            <p>DASS-21 terdiri dari 21 pertanyaan pilihan ganda dan memakan waktu kurang dari 5 menit. Penilaian ini bukan diagnosis, namun membantu memahami risiko mental Anda.</p>
+
+            <div class="row text-center mb-4">
+                <div class="col info-box mx-2">
+                    <h4>21</h4>
+                    <small>pertanyaan</small>
+                </div>
+                <div class="col info-box mx-2">
+                    <h4><i class="fas fa-check-square"></i></h4>
+                    <small>pilihan ganda</small>
+                </div>
+                <div class="col info-box mx-2">
+                    <h4>&lt; 5</h4>
+                    <small>menit</small>
+                </div>
+            </div>
+
+            <button class="btn btn-start d-block mx-auto mb-4" onclick="showForm()">Mulai</button>
+
+            <form method="POST" class="d-none" action="{{ url_for('bp_survey.start_dass21') }}" id="form-user">
+                <div class="mb-3">
+                    <input type="text" name="name" class="form-control" placeholder="Nama Lengkap" required>
+                </div>
+                <div class="mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Email Aktif" required>
+                </div>
+                <div class="mb-3">
+                    <select name="gender" class="form-control" required>
+                        <option value="">-- Pilih Jenis Kelamin --</option>
+                        <option value="male">Laki-laki</option>
+                        <option value="female">Perempuan</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <input type="text" name="universitas" class="form-control" placeholder="Universitas">
+                </div>
+                <div class="mb-3">
+                    <input type="text" name="jurusan" class="form-control" placeholder="Jurusan">
+                </div>
+                <div class="mb-3">
+                    <input type="text" name="semester" class="form-control" placeholder="Semester">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Lanjut ke Survey</button>
+            </form>
+
+            <small class="d-block text-center mt-3">
+                Dengan melanjutkan, Anda menyetujui <a href="#">Kebijakan Privasi</a> dan <a href="#">Syarat & Ketentuan</a>.
+            </small>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showForm() {
+        document.getElementById('form-user').classList.remove('d-none');
+        window.scrollTo({ top: document.getElementById('form-user').offsetTop - 100, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>

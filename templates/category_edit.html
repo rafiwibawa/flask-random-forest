@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-4 text-gray-800">Edit Kategori Pertanyaan</h1>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Nama Kategori</label>
+            <input type="text" name="name" class="form-control" value="{{ category.name }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{{ url_for('bp_category.index') }}" class="btn btn-secondary">Batal</a>
+    </form>
+</div>
+{% endblock %}

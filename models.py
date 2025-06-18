@@ -46,6 +46,7 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(500), nullable=False)
     description = db.Column(db.String(500))
+    image = db.Column(db.String(255)) 
     question_type_id = db.Column(db.Integer, db.ForeignKey('question_types.id'))
     question_category_id = db.Column(db.Integer, db.ForeignKey('question_categories.id'))
     other_option = db.Column(db.Boolean)

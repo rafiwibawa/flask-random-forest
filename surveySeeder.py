@@ -3,6 +3,7 @@ from models import Question, QuestionCategory, QuestionType, QuestionOption, Que
 from datetime import datetime
 from slugify import slugify  # pip install python-slugify jika belum ada
 
+# Data pertanyaan dan kategori
 questions_data = [
     ("Saya sama sekali tidak dapat merasakan perasaan positif (contoh: merasa gembira, bangga, dsb).", "depression"),
     ("Saya merasa sulit berinisiatif melakukan sesuatu.", "depression"),
@@ -35,15 +36,18 @@ options = [
     ("Sangat setuju", 3),
 ]
 
+# Default image path
+DEFAULT_IMAGE_PATH = "survey.svg"  # image disimpan di folder static/img/
+
 with app.app_context():
-    # Pastikan question type 'single' tersedia
+    # Cek dan buat tipe pertanyaan 'single' jika belum ada
     q_type = QuestionType.query.filter_by(name='single').first()
     if not q_type:
         q_type = QuestionType(name='single')
         db.session.add(q_type)
         db.session.commit()
 
-    # Buat opsi skala jika belum ada
+    # Cek dan buat opsi jawaban
     option_objects = []
     for text, value in options:
         option = QuestionOption.query.filter_by(question_option=text).first()
@@ -60,7 +64,7 @@ with app.app_context():
     category_map = {}
     question_objects = []
 
-    # Tambahkan pertanyaan
+    # Tambah pertanyaan + kategori + opsi
     for question_text, cat_name in questions_data:
         if cat_name not in category_map:
             cat = QuestionCategory.query.filter_by(name=cat_name).first()
@@ -70,7 +74,7 @@ with app.app_context():
                 db.session.commit()
             category_map[cat_name] = cat
 
-        # Hindari duplikat
+        # Cegah duplikat pertanyaan
         existing = Question.query.filter_by(question=question_text).first()
         if not existing:
             q = Question(
@@ -78,12 +82,13 @@ with app.app_context():
                 question_type_id=q_type.id,
                 question_category_id=category_map[cat_name].id,
                 other_option=False,
+                image='img/start_survey.svg',  # ← Tambahkan image
                 created_at=datetime.utcnow()
             )
             db.session.add(q)
             db.session.commit()
 
-            # Hubungkan dengan opsi
+            # Hubungkan dengan semua opsi skala
             for opt in option_objects:
                 link = QuestionOptionList(
                     question_id=q.id,
@@ -95,7 +100,7 @@ with app.app_context():
 
     db.session.commit()
 
-    # Buat Survey DASS-21
+    # Cek atau buat Survey DASS-21
     survey_name = "DASS-21"
     survey = Survey.query.filter_by(name=survey_name).first()
     if not survey:
@@ -108,7 +113,7 @@ with app.app_context():
         db.session.add(survey)
         db.session.commit()
 
-    # Tambahkan SurveyQuestionList berdasarkan kategori unik
+    # Hubungkan kategori ke Survey
     for i, cat in enumerate(category_map.values(), start=1):
         exists = SurveyQuestionList.query.filter_by(survey_id=survey.id, question_category_id=cat.id).first()
         if not exists:
