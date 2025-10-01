@@ -5,7 +5,7 @@
     <title>Hasil DASS-21</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet"> 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous"> -->
     
     <style>
         body.bg-white {
@@ -52,19 +52,61 @@
             font-weight: bold;
             color: #4d72de;
         }
+
+        .rekomendasi-box {
+            background-color: #d4e4f7;
+            border-left: 4px solid #4d72de;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .rekomendasi-box h4 {
+            color: #4d72de;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .rekomendasi-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .rekomendasi-box li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .rekomendasi-box li:before {
+            content: "•";
+            color: #4d72de;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+        }
+
+        .severity-label {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-white">
 
 <div class="container py-5">
-    <div class="text-center mb-5 p-5">
-        <img src="{{ url_for('static', filename='img/result.svg') }}" alt="Hasil DASS-21" class="img-fluid mb-4" style="max-width: 300px;">
+    <div class="text-center mb-2 p-5">
+        <img src="{{ url_for('static', filename='img/result.svg') }}" alt="Hasil DASS-21" class="img-fluid mb-1" style="max-width: 300px;">
         <h2 class="judul-hasil">Risiko {{ results['depression']['label'] }}</h2>
         <p>untuk gejala depresi, kecemasan, dan stres</p>
     </div>
 
     <div class="d-flex justify-content-center flex-wrap gap-4">
-        <div class="card-result mx-3 mb-4" style="background-color:#5fa8d3;">
+        <div class="card-result mx-3 mb-1" style="background-color:#5fa8d3;">
             <div class="card-header">Depresi</div>
             <div class="card-body">
                 {{ results['depression']['label'] }}
@@ -73,7 +115,7 @@
             </div>
         </div>
 
-        <div class="card-result mx-3 mb-4" style="background-color:#4dd0e1;">
+        <div class="card-result mx-3 mb-1" style="background-color:#4dd0e1;">
             <div class="card-header">Kecemasan</div>
             <div class="card-body">
                 {{ results['anxiety']['label'] }}
@@ -82,7 +124,7 @@
             </div>
         </div>
 
-        <div class="card-result mx-3 mb-4" style="background-color:#e1bee7;">
+        <div class="card-result mx-3 mb-1" style="background-color:#e1bee7;">
             <div class="card-header">Stres</div>
             <div class="card-body">
                 {{ results['stress']['label'] }}
@@ -90,6 +132,16 @@
                 <small>Skor: {{ results['stress']['score'] }}</small>
             </div>
         </div>
+    </div>
+
+    <!-- Rekomendasi Section -->
+    <div class="rekomendasi-box">
+        <h4>Rekomendasi:</h4>
+        <ul>
+            <li><span class="severity-label">Normal:</span> Tidak ada gejala signifikan, tetap jaga kesehatan mental.</li>
+            <li><span class="severity-label">Ringan - Sedang:</span> Perlu pemantauan lebih lanjut dan manajemen stres, seperti relaksasi atau berbicara dengan seseorang.</li>
+            <li><span class="severity-label">Berat - Sangat Berat:</span> Disarankan untuk berkonsultasi dengan psikolog atau psikiater untuk intervensi profesional seperti terapi atau konseling.</li>
+        </ul>
     </div>
 
     <div class="text-center mt-5">

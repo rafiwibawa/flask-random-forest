@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
-from flask import jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify, flash
 from models import db, StressPrediction
 
 bp_respondent = Blueprint('bp_respondent', __name__)
@@ -51,9 +50,40 @@ def run_stress():
             'train_data': result['train_count'],
             'test_data': result['test_count'],
             'classification_report': result['report'],
-            # 'predictions': prediction_data
         })
 
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+@bp_respondent.route('/respondent/delete/<int:id>', methods=['GET'])
+def deleted(id):
+    try:
+        from models import SurveyRespondent, StressPrediction, PredictionLog
+
+        respondent = SurveyRespondent.query.get(id)
+        if not respondent:
+            flash("❌ Respondent tidak ditemukan.", "danger")
+            return redirect(url_for('bp_respondent.index'))
+
+        # Cek apakah ada relasi ke prediction_logs
+        has_logs = PredictionLog.query.filter_by(survey_respondent_id=id).first()
+        if has_logs:
+            flash("❌ Data tidak bisa dihapus karena masih memiliki riwayat di prediction_logs.", "danger")
+            return redirect(url_for('bp_respondent.index'))
+
+        # Hapus stress prediction yang berelasi
+        StressPrediction.query.filter_by(survey_respondent_id=id).delete()
+
+        # Hapus respondent
+        db.session.delete(respondent)
+        db.session.commit()
+
+        flash("✅ Respondent berhasil dihapus.", "success")
+        return redirect(url_for('bp_respondent.index'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"❌ Terjadi error: {str(e)}", "danger")
+        return redirect(url_for('bp_respondent.index'))

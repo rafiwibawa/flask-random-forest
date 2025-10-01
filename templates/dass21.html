@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Mulai DASS-21</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet"> 
+    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    
+    <style>
+        body.bg-white {
+            background: linear-gradient(135deg, #e9f0ff, #ffffff);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            /* background: url('{{ url_for("static", filename="img/bg-pattern.svg") }}'); */
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        .btn-start {
+            background-color: #4d72de;
+            color: white;
+            font-size: 1.1rem;
+            padding: 10px 25px;
+            border-radius: 8px;
+        }
+        .info-box {
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff;
+
+        }
+        .info-box h4 {
+            font-size: 32px;
+            color: #4d72de;
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-5 mb-4 mb-md-0 text-center">
+            <img src="{{ url_for('static', filename='img/start_survey.svg') }}" alt="Survey Image" class="img-fluid" style="max-height: 400px;">
+        </div>
+        <div class="col-md-7">
+            <h3 class="fw-bold">Memahami Keadaan Emosi Anda</h3>
+            <p>DASS-21 adalah kuisioner singkat berisi 21 pertanyaan untuk mengukur tingkat stres, kecemasan, dan depresi. Tes ini hanya memerlukan waktu sekitar 5 menit dan hasilnya akan langsung muncul setelah selesai.</p>
+            <p>Hasil tes bersifat privat dan bukan diagnosis klinis, namun dapat menjadi indikasi awal (early warning) untuk memahami kondisi emosimu. Jika ditemukan risiko, disarankan untuk berkonsultasi dengan psikolog atau psikiater. </p>
+
+            <div class="row text-center mb-4">
+                <div class="col info-box mx-2">
+                    <h4>21</h4>
+                    <small>pertanyaan</small>
+                </div>
+                <div class="col info-box mx-2">
+                    <h4><i class="fas fa-check-square"></i></h4>
+                    <small>pilihan ganda</small>
+                </div>
+                <div class="col info-box mx-2">
+                    <h4>&lt; 5</h4>
+                    <small>menit</small>
+                </div>
+            </div>
+
+            <a href="/mulai" class="btn btn-start d-block mx-auto mb-4"> Mulai</a> 
+        </div>
+    </div>
+</div> 
+
+</body>
+</html>

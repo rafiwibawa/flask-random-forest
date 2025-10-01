@@ -4,117 +4,301 @@
     <meta charset="UTF-8">
     <title>Mulai DASS-21</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet"> 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous">
-    
     <style>
-        body.bg-white {
-            background: linear-gradient(135deg, #e9f0ff, #ffffff);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            background: url('{{ url_for("static", filename="img/bg-pattern.svg") }}');
-            background-repeat: no-repeat;
-            background-size: cover;
-            opacity: 0.1;
-            z-index: -1;
+        body {
+            background: linear-gradient(135deg, #e9f0ff, #ffffff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        .btn-start {
+
+        .main-wrapper {
+            max-width: 1300px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(77, 114, 222, 0.1);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            min-height: 600px;
+        }
+
+        .left-panel {
+            background: linear-gradient(135deg, #4d72de, #3d5ec5);
+            padding: 40px 35px;
+            color: white;
+        }
+
+        .left-panel h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        .left-panel h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            opacity: 0.95;
+        }
+
+        .instruction-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instruction-list li {
+            margin-bottom: 14px;
+            padding-left: 30px;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .instruction-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .warning-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 243, 205, 0.95);
+            border-radius: 10px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .warning-section h4 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #d68910;
+        }
+
+        .warning-section h4:before {
+            content: "⚠";
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        .warning-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .warning-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #5d4e37;
+        }
+
+        .warning-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+            color: #f39c12;
+        }
+
+        .right-panel {
+            padding: 50px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-panel h3 {
+            color: #4d72de;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4d72de;
+            box-shadow: 0 0 0 3px rgba(77, 114, 222, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            color: #4a5568;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
             background-color: #4d72de;
             color: white;
-            font-size: 1.1rem;
-            padding: 10px 25px;
+            border: none;
             border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
         }
-        .info-box {
-            border: 1px solid #ccc;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            background-color: #ffffff;
 
+        .btn-submit:hover {
+            background-color: #3d5ec5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(77, 114, 222, 0.3);
         }
-        .info-box h4 {
-            font-size: 32px;
+
+        .privacy-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .privacy-text a {
             color: #4d72de;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-text a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                padding: 30px 25px;
+            }
+
+            .right-panel {
+                padding: 35px 30px;
+            }
+
+            .warning-section {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .left-panel {
+                padding: 25px 20px;
+            }
+
+            .left-panel h2 {
+                font-size: 1.4rem;
+            }
+
+            .right-panel {
+                padding: 30px 20px;
+            }
+
+            .right-panel h3 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
-<body class="bg-white">
+<body>
+    <div class="main-wrapper">
+        <div class="left-panel">
+            <h2>DASS-21<br>Assessment</h2>
+            
+            <h4>Petunjuk Pengisian</h4>
+            <ul class="instruction-list">
+                <li>Jawablah semua pertanyaan sesuai dengan kondisi saat ini yang anda alami atau rasakan</li>
+                <li>Setiap jawaban yang dijawab akan mendapatkan skor</li>
+                <li>Semakin sesuai yang anda alami maka hasil tes ini akan semakin akurat dan benar</li>
+                <li><strong>Selamat Mengerjakan!</strong></li>
+            </ul>
 
-<div class="container py-5">
-    <div class="row justify-content-center align-items-center min-vh-100">
-        <div class="col-md-5 mb-4 mb-md-0 text-center">
-            <img src="{{ url_for('static', filename='img/start_survey.svg') }}" alt="Survey Image" class="img-fluid" style="max-height: 400px;">
-        </div>
-        <div class="col-md-7">
-            <h3 class="fw-bold">Memahami Keadaan Emosi Anda</h3>
-            <p>Gunakan skala DASS-21 untuk mengevaluasi tingkat Depresi, Kecemasan, dan Stres Anda.</p>
-            <p>DASS-21 terdiri dari 21 pertanyaan pilihan ganda dan memakan waktu kurang dari 5 menit. Penilaian ini bukan diagnosis, namun membantu memahami risiko mental Anda.</p>
-
-            <div class="row text-center mb-4">
-                <div class="col info-box mx-2">
-                    <h4>21</h4>
-                    <small>pertanyaan</small>
-                </div>
-                <div class="col info-box mx-2">
-                    <h4><i class="fas fa-check-square"></i></h4>
-                    <small>pilihan ganda</small>
-                </div>
-                <div class="col info-box mx-2">
-                    <h4>&lt; 5</h4>
-                    <small>menit</small>
-                </div>
+            <div class="warning-section">
+                <h4>Penting untuk diperhatikan!</h4>
+                <ul class="warning-list">
+                    <li>Alat tes ini hanya sebagai deteksi awal dan tidak dapat digunakan sebagai acuan diagnosis penyakit</li>
+                    <li>Hasil Tes hanya diketahui oleh User (tanpa disimpan di database/Privasi)</li>
+                    <li>Hasil tes memberikan gambaran umum kondisi mental saat ini</li>
+                    <li>Tes dibuat berdasarkan studi yang telah diuji validitas dan reliabilitasnya</li>
+                    <li>Sangat dianjurkan untuk meminta saran pada profesional Psikiater/Psikolog</li>
+                </ul>
             </div>
+        </div>
 
-            <button class="btn btn-start d-block mx-auto mb-4" onclick="showForm()">Mulai</button>
-
-            <form method="POST" class="d-none" action="{{ url_for('bp_survey.start_dass21') }}" id="form-user">
-                <div class="mb-3">
+        <div class="right-panel">
+            <h3>Data Diri</h3>
+            
+            <form method="POST" action="{{ url_for('bp_survey.start_dass21') }}">
+                <div class="form-group">
                     <input type="text" name="name" class="form-control" placeholder="Nama Lengkap" required>
                 </div>
-                <div class="mb-3">
+                
+                <div class="form-group">
                     <input type="email" name="email" class="form-control" placeholder="Email Aktif" required>
                 </div>
-                <div class="mb-3">
+                
+                <div class="form-group">
                     <select name="gender" class="form-control" required>
                         <option value="">-- Pilih Jenis Kelamin --</option>
                         <option value="male">Laki-laki</option>
                         <option value="female">Perempuan</option>
                     </select>
                 </div>
-                <div class="mb-3">
+                
+                <div class="form-group">
                     <input type="text" name="universitas" class="form-control" placeholder="Universitas">
                 </div>
-                <div class="mb-3">
+                
+                <div class="form-group">
                     <input type="text" name="jurusan" class="form-control" placeholder="Jurusan">
                 </div>
-                <div class="mb-3">
+                
+                <div class="form-group">
                     <input type="text" name="semester" class="form-control" placeholder="Semester">
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Lanjut ke Survey</button>
-            </form>
+                
+                <button type="submit" class="btn-submit">Lanjut ke Survey</button>
 
-            <small class="d-block text-center mt-3">
-                Dengan melanjutkan, Anda menyetujui <a href="#">Kebijakan Privasi</a> dan <a href="#">Syarat & Ketentuan</a>.
-            </small>
+                <div class="privacy-text">
+                    Dengan melanjutkan, Anda menyetujui<br>
+                    <a href="#">Kebijakan Privasi</a> dan <a href="#">Syarat & Ketentuan</a>
+                </div>
+            </form>
         </div>
     </div>
-</div>
-
-<script>
-    function showForm() {
-        document.getElementById('form-user').classList.remove('d-none');
-        window.scrollTo({ top: document.getElementById('form-user').offsetTop - 100, behavior: 'smooth' });
-    }
-</script>
-
 </body>
 </html>

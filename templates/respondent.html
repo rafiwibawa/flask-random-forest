@@ -1,19 +1,32 @@
-{# templates/respondents.html #}
 {% extends 'base.html' %}
 
 {% block head %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 {% endblock %}
+
 {% block content %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Respondents</h1> 
     <div class="d-flex align-items-center gap-2"> 
-         
         <button id="btnRunStress" class="btn btn-primary mr-2">Run Stress</button> 
         <a href="/run-model/stress" class="btn btn-secondary">Run Stress Model</a> 
-      </div>
+    </div>
 </div>
+
+{# 🔹 FLASH MESSAGES #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
 <div class="row"> 
     <div class="col-12">
@@ -36,6 +49,7 @@
                                 <th>Semester</th>
                                 <th>Tanggal</th>
                                 <th>Stress Level</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +64,13 @@
                                 <td>{{ res.semester }}</td>
                                 <td>{{ res.datetime.strftime('%Y-%m-%d %H:%M') if res.datetime else '-' }}</td>
                                 <td>{{ res.stress_level or 'Belum diprediksi' }}</td>
+                                <td>
+                                    <a href="{{ url_for('bp_respondent.deleted', id=res.id) }}" 
+                                        class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Yakin ingin menghapus data ini?')">
+                                        Delete
+                                    </a>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -68,50 +89,41 @@
 <script>
     $(document).ready(function () {
         $('#respondentsTable').DataTable();
+
+        $('#btnRunStress').on('click', function () {
+            const btn = $(this);
+            btn.prop('disabled', true).text('Running...');
+
+            fetch('/run-stress')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    if (data.error) {
+                        html = `<strong>Error:</strong> ${data.error}`;
+                        $('#stressResult').removeClass('alert-info').addClass('alert-danger');
+                    } else {
+                        html = `
+                            <strong>✅ Model berhasil dijalankan:</strong><br>
+                            Akurasi: <strong>${data.accuracy}</strong><br>
+                            MAE: ${data.mae}<br>
+                            RMSE: ${data.rmse}<br>
+                            Data Latih: ${data.train_data}, Data Uji: ${data.test_data}
+                        `;
+                        $('#stressResult').removeClass('alert-danger').addClass('alert-info');
+                    }
+
+                    $('#stressResult').html(html).removeClass('d-none');
+                    btn.prop('disabled', false).text('Run Stress');
+                })
+                .catch(err => {
+                    $('#stressResult')
+                        .html(`<strong>Terjadi kesalahan:</strong> ${err}`)
+                        .removeClass('d-none')
+                        .removeClass('alert-info')
+                        .addClass('alert-danger');
+                    btn.prop('disabled', false).text('Run Stress');
+                });
+        });
     });
 </script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-<script>
-$(document).ready(function () {
-    $('#respondentsTable').DataTable();
-
-    $('#btnRunStress').on('click', function () {
-        const btn = $(this);
-        btn.prop('disabled', true).text('Running...');
-
-        fetch('/run-stress')
-            .then(response => response.json())
-            .then(data => {
-                // location.reload();
-                let html = '';
-                if (data.error) {
-                    html = `<strong>Error:</strong> ${data.error}`;
-                    $('#stressResult').removeClass('alert-info').addClass('alert-danger');
-                } else {
-                    html = `
-                        <strong>✅ Model berhasil dijalankan:</strong><br>
-                        Akurasi: <strong>${data.accuracy}</strong><br>
-                        MAE: ${data.mae}<br>
-                        RMSE: ${data.rmse}<br>
-                        Data Latih: ${data.train_data}, Data Uji: ${data.test_data}
-                    `;
-                    $('#stressResult').removeClass('alert-danger').addClass('alert-info');
-                }
-
-                $('#stressResult').html(html).removeClass('d-none');
-                btn.prop('disabled', false).text('Run Stress');
-            })
-            .catch(err => {
-                $('#stressResult')
-                    .html(`<strong>Terjadi kesalahan:</strong> ${err}`)
-                    .removeClass('d-none')
-                    .removeClass('alert-info')
-                    .addClass('alert-danger');
-                btn.prop('disabled', false).text('Run Stress');
-            });
-    });
-});
-</script>
-
 {% endblock %}
