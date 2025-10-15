@@ -5,6 +5,7 @@ from datetime import datetime
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sqlalchemy import text
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import (
     classification_report, accuracy_score,
     mean_absolute_error, mean_squared_error
@@ -195,13 +196,19 @@ def train_and_save_model(X, y, respondent_ids):
 
     db.session.commit()
 
+    # Tambahkan confusion matrix
+    cm = confusion_matrix(y_test, y_pred)
+    cm_list = cm.tolist()  # ubah ke list biar bisa di-JSON-kan
+
     return {
         "accuracy": acc,
-        "report": report_dict,       
+        "report": report_dict,
         "mae": mae,
-        "rmse": rmse, 
+        "rmse": rmse,
         "train_count": len(X_train),
-        "test_count": len(X_test)
+        "test_count": len(X_test),
+        "confusion_matrix": cm_list,
+        "labels": encoder.classes_.tolist()
     }
 
 

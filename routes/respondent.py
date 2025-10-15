@@ -50,6 +50,8 @@ def run_stress():
             'train_data': result['train_count'],
             'test_data': result['test_count'],
             'classification_report': result['report'],
+            'confusion_matrix': result['confusion_matrix'],
+            'labels': result['labels'],
         })
 
     except Exception as e:

@@ -36,6 +36,9 @@
             </div>
             <div class="card-body">
                 <div id="stressResult" class="alert alert-info d-none"></div>
+                <div id="chartContainer" style="width: 350px; height: 350px; margin: auto; display: none;">
+                    <canvas id="confusionMatrixChart"></canvas>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered" id="respondentsTable" width="100%" cellspacing="0">
                         <thead>
@@ -86,6 +89,10 @@
 {% block scripts %}  
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.3.0/dist/chartjs-chart-matrix.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
 <script>
     $(document).ready(function () {
         $('#respondentsTable').DataTable();
@@ -102,6 +109,106 @@
                         html = `<strong>Error:</strong> ${data.error}`;
                         $('#stressResult').removeClass('alert-info').addClass('alert-danger');
                     } else {
+                        if (data.confusion_matrix && data.labels) {
+                            const ctx = document.getElementById('confusionMatrixChart').getContext('2d');
+
+                            if (window.cmChart) {
+                                window.cmChart.destroy();
+                            }
+
+                            const matrix = data.confusion_matrix;
+                            const labels = data.labels;
+                            const heatmapData = [];
+                            const maxValue = Math.max(...matrix.flat());
+
+                            for (let i = 0; i < matrix.length; i++) {
+                                for (let j = 0; j < matrix[i].length; j++) {
+                                    heatmapData.push({
+                                        x: labels[j],
+                                        y: labels[i],
+                                        v: matrix[i][j]
+                                    });
+                                }
+                            }
+
+                            const config = {
+                                type: 'matrix',
+                                data: {
+                                    datasets: [{
+                                        label: 'Confusion Matrix',
+                                        data: heatmapData,
+                                        backgroundColor(ctx) {
+                                            const value = ctx.dataset.data[ctx.dataIndex].v;
+                                            const alpha = value / maxValue;
+                                            return `rgba(54, 162, 235, ${alpha || 0.05})`;
+                                        },
+                                        borderColor: 'rgba(255,255,255,0.8)',
+                                        borderWidth: 1,
+                                        width(ctx) {
+                                            const chart = ctx.chart;
+                                            return chart.chartArea
+                                                ? (chart.chartArea.width / labels.length) - 2
+                                                : 0;
+                                        },
+                                        height(ctx) {
+                                            const chart = ctx.chart;
+                                            return chart.chartArea
+                                                ? (chart.chartArea.height / labels.length) - 2
+                                                : 0;
+                                        }
+                                    }]
+                                },
+                                options: {
+                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    plugins: {
+                                        legend: { display: false },
+                                        title: {
+                                            display: true,
+                                            text: 'Confusion Matrix',
+                                            font: { size: 16 }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                title: ctx => `True: ${ctx[0].raw.y}`,
+                                                label: ctx => `Pred: ${ctx.raw.x}, Value: ${ctx.raw.v}`
+                                            }
+                                        },
+                                        datalabels: {
+                                            color: '#000',
+                                            font: { weight: 'bold' },
+                                            formatter: (value, ctx) => {
+                                                const v = ctx.dataset.data[ctx.dataIndex].v;
+                                                return v > 0 ? v : '';  
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        x: {
+                                            type: 'category',
+                                            labels: labels,
+                                            title: { display: true, text: 'Predicted label' },
+                                            grid: { display: false },
+                                            offset: true
+                                        },
+                                        y: {
+                                            type: 'category',
+                                            labels: labels.slice().reverse(),
+                                            title: { display: true, text: 'True label' },
+                                            grid: { display: false },
+                                            offset: true
+                                        }
+                                    }
+                                },
+                                plugins: [ChartDataLabels]
+                            };
+
+
+                            document.getElementById('chartContainer').style.display = 'block';
+                            window.cmChart = new Chart(ctx, config);
+                        }
+
+
                         html = `
                             <strong>✅ Model berhasil dijalankan:</strong><br>
                             Akurasi: <strong>${data.accuracy}</strong><br>
